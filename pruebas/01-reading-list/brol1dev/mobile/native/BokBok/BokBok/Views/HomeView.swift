@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
+  @StateObject var bookModel = BookViewModel()
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("Best sellers")
@@ -16,11 +18,12 @@ struct HomeView: View {
         .padding(20)
       
       ScrollView(.horizontal, showsIndicators: false) {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top) {
           Image("book1")
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(maxHeight: 200)
+            .padding(.leading, 20)
           
           Image("book1")
             .resizable()
@@ -37,6 +40,17 @@ struct HomeView: View {
             .aspectRatio(contentMode: .fit)
             .frame(maxHeight: 200)
         }
+      }
+      
+      List{
+        ForEach(bookModel.items){ item in
+          HStack{
+            Text("\(item.volumeInfo.title)")
+          }
+        }
+      }
+      .task {
+        await bookModel.getBestSellerBooks()
       }
     }
     .frame(maxWidth: .infinity)
